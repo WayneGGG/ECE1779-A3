@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+    <!-- Add some CSS to change client UI -->
+    <style>
+    body{
+		    background:#eff0f4;
+		}
+	.container2{
+		    postion:relative;
+		    display:flex;
+		    justify-content:center;
+	    	    align-items:center;
+		    flex-wrap:wrap;
+		    padding:50px 0;
+		    gap:40px 60px;
+		}
+    .container2 .drop{
+		    position:relative;
+		    width:400px;
+		    height:400px;
+		    box-shadow:inset 20px 20px 20px rgba(0,0,0,0.05),
+		    25px 35px 20px rgba(0,0,0,0.05),
+		    25px 30px 30px rgba(0,0,0,0.05),
+		    inset -20px -20px 25px rgba(255,255,255,0.9);
+		    transition:0.5s ease-in-out;
+		    display:flex;
+		    justify-content:center;
+		    align-items:center;
+		}
+		.container2 .drop:nth-child(1){
+		    border-radius: 60% 40% 65% 35% / 35% 44% 56% 65%;
+		}
+		.container2 .drop:nth-child(2){
+		    border-radius: 32% 68% 41% 59% / 41% 28% 72% 59%;
+		}
+		.container2 .drop:hover{
+		    border-radius:50%
+		}
+		.container2 .drop::before{
+		    content:'';
+		    position:absolute;
+		    top:50px;
+		    left:85px;
+		    width:35px;
+		    height:35px;
+		    background:#fff;
+		    border-radius: 50%;
+		    opacity:0.9;
+		}
+		.container2 .drop::after{
+		    content:'';
+		    position:absolute;
+		    top:90px;
+		    left:110px;
+		    width:15px;
+		    height:15px;
+		    background:#fff;
+		    border-radius: 50%;
+		    opacity:0.9;
+		}
+		.container2 .drop .content{
+		    position:relative;
+		    display:flex;
+		    justify-content:center;
+		    align-items:center;
+		    flex-direction:column;
+		    text-align:center;
+		    padding:50px;
+		    gap:15px;
+		}
+		.container2 .drop .content button{
+		    position:relative;
+		    padding:10px; 25px;
+		    background:var(--clr);
+		    text-decoration:none;
+		    color:white;
+		    border-radius:25px;
+		    font-weight:500;
+		    text-shadow:0 2px 2px rgba(0,0,0,0.25);
+		    opacity:0.6;
+		    transition:0.5s
+		}
+		.container2 .drop .content button:hover{
+		    opacity:1;
+		}
+		.container2 .drop .content button::before{
+		    content:'';
+		    position:absolute;
+		    left:50%;
+		    top:3px;
+		    transform:translateX(-50%);
+		    width:65%;
+		    height:5px;
+		    border-radius:5px;
+		    background:rgba(255,255,255,0.5);
+		}
+
+		select {
+		  background-color: #ffffff;
+		  color: #333333;
+		  padding: 2px 2px;
+		  border: 1px solid #cccccc;
+		  border-radius: 4px;
+		  box-shadow: none;
+		}
+		input {
+		  background-color: #ffffff;
+		  color: #333333;
+		  padding: 2px 2px;
+		  border: 1px solid #cccccc;
+		  border-radius: 4px;
+		  box-shadow: none;
+		}
+		.container {
+  			max-width: 1200px; /* set the maximum width for the container */
+  			margin: 0 auto; /* center the container */
+		}
+		.nav-tabs {
+  			font-family: Arial;
+			font-weight:bold;
+  			list-style: none; /* remove the default bullet points */
+  			padding: 0;
+  			margin: 0;
+  			border-bottom: 1px solid #ddd; /* add a bottom border */
+  			border-radius: 5px;
+  			background-image: linear-gradient(to right, rgba(100,200,255,1), rgba(0,255,255,0));
+		}
+		.nav-tabs li {
+  			display: inline-block; /* display the list items in a row */
+  			margin-right: 10px; /* add some space between the list items */
+		}
+		.nav-tabs li a {
+  			display: block; /* make the links full width */
+  			padding: 10px; /* add some padding around the links */
+  			text-decoration: none; /* remove the underline */
+  			color: #333; /* set the link color */
+		}
+		.nav-tabs li a:hover {
+  			background-color: #0096FF; /* add a hover effect */
+  			border-radius: 5px;
+		}
+    </style>
+    <script>
+        // define the callAPI function that takes a first name and last name as parameters
+        var callAPI = (email, password)=>{
+            // instantiate a headers object
+            var myHeaders = new Headers();
+            // add content type header to object
+            myHeaders.append("Content-Type", "application/json");
+            // using built in JSON utility package turn object to string and store in a variable
+            var raw = JSON.stringify({'email': email,'password': password});
+            // create a JSON object with parameters for API call and store in a variable
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+            // make API call with parameters and use promises to get response
+            fetch("https://9v6vtthin8.execute-api.us-east-1.amazonaws.com/dev", requestOptions)
+            .then(response => response.text())
+            .then(result => alert(JSON.parse(result).body))
+            .catch(error => console.log('error', error));
+        }
+    </script>
+</head>
+<body>
+	<div class="container">
+		<ul class="nav nav-tabs">
+			<li role="presentation"><a href="https://login1779bucket.s3.amazonaws.com/login.html">Login Page</a></li>
+			<li role="presentation"><a href="https://signup1779bucket.s3.amazonaws.com/signup.html">Sign up Page</a></li>
+		</ul>
+	</div>
+    <div class="container2">
+        <div class="drop" style="--clr:blue;">
+            <div class="content">
+                <form method="post" action="https:/9v6vtthin8.us-east-1.amazonaws.com/dev/contact">
+                    <br><br>
+                    <label>Email :</label>
+                    <input type="text" id="email">
+                    <br><br>
+                    <label>Password :</label>
+                    <input type="password" id="password">
+                    <br><br>
+                    <!-- set button onClick method to call function defined passing input values as parameters -->
+                    <button type="button" onclick="callAPI(document.getElementById('email').value,document.getElementById('password').value)">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

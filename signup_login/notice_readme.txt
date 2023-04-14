@@ -1,0 +1,1 @@
+Remember to change the invoke url and nav tab url in html, and arn in inline-policy for different setup
