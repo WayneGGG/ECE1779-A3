@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Upload Page</title>
+
+        <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-theme.min.css">
+        <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="/static/css/styles.css" />
+        <style type="text/css">
+        </style>
+    </head>
+    <body>
+        <label>Hello {{user}}</label>
+        <div class="container">
+            <ul class="nav nav-tabs">
+                <li role="presentation"><a href="{{ url_for('main', user=user, password=password) }}">Main</a></li>
+                <li role="presentation"><a href="{{ url_for('upload', user=user, password=password) }}">Upload</a></li>
+                <li role="presentation"><a href="{{ url_for('key', user=user, password=password) }}">Get image by key</a></li>
+                <li role="presentation"><a href="{{ url_for('display', user=user, password=password) }}">Display</a></li>
+                <li role="presentation"><a href="{{ url_for('search', user=user, password=password) }}">Search</a></li>
+                <li role="presentation"><a href="{{ url_for('logout') }}">Log out</a></li>
+            </ul>
+        </div>
+
+        <div class="container">
+            <form action="{{ url_for('upload_put', user=user, password=password) }}" method="post" enctype = multipart/form-data>
+                <table align="center">
+                    <tr>
+                        <td>
+                            <label>Enter a pair of key and an image you want to upload:</label><br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <label>Key of the image:</label>
+                            <input type="text" name="key"/><br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <label>Tag of the image:</label>
+                            <input type="text" name="tag"/><br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <label>Image:</label>
+                            <input type="file" name=file />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <input type="submit" value="upload" />
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+
+    </body>
+</html>

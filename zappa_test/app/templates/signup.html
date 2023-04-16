@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signup Page</title>
+</head>
+<body>
+        <div class="container">
+            <ul class="nav nav-tabs">
+                <li role="presentation"><a href="{{ url_for('signup')}}">Signup</a></li>
+                <li role="presentation"><a href="{{ url_for('login')}}">Login</a></li>
+            </ul>
+        </div>
+
+        <div class="container">
+            <form action="{{ url_for('user_signup')}}" method="post" enctype = multipart/form-data>
+                <table align="center">
+                    <tr>
+                        <td>
+                            <label>User sign up</label><br>
+                            <label>Enter username and password:</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <label>Username:</label>
+                            <input type="text" name="user"/>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center">
+                            <label>Password:</label>
+                            <input type="text" name="password"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <input type="submit" value="sign up" />
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Key Page</title>
+
+        <!-- Use CSS files -->
+        <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="static/bootstrap/css/bootstrap-theme.min.css">
+        <!-- Load JavaScript files -->
+        <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="/static/css/styles.css" />
+        <style type="text/css">
+        </style>
+
+    </head>
+    <body>
+        <label>Hello {{user}}</label>
+        <div class="container">
+            <ul class="nav nav-tabs">
+                <li role="presentation"><a href="{{ url_for('main', user=user, password=password) }}">Main</a></li>
+                <li role="presentation"><a href="{{ url_for('upload', user=user, password=password) }}">Upload</a></li>
+                <li role="presentation"><a href="{{ url_for('key', user=user, password=password) }}">Get image by key</a></li>
+                <li role="presentation"><a href="{{ url_for('display', user=user, password=password) }}">Display</a></li>
+                <li role="presentation"><a href="{{ url_for('search', user=user, password=password) }}">Search</a></li>
+                <li role="presentation"><a href="{{ url_for('logout') }}">Log out</a></li>
+            </ul>
+        </div>
+
+        <div class="container">
+            <form action="{{ url_for('key_retrieve_image', user=user, password=password) }}" method="post">
+                <table align="center">
+                    <tr>
+                        <td>
+                            <label>Enter a valid key to get the associated image</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <label>(JSON response) key:</label>
+                            <input type="text" name="key" />
+                            <input type="submit" value="get" />
+                        </td>
+                    </tr>
+                </table>
+            </form><br>
+            <form action="{{ url_for('key_retrieve_nojson_image', user=user, password=password) }}" method="post">
+                <table align="center">
+                    <tr>
+                        <td>
+                            <label>Enter a valid key to get the associated image</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <label>(Image response) key:</label>
+                            <input type="text" name="key" />
+                            <input type="submit" value="get" />
+                        </td>
+                    </tr>
+                </table>
+            </form><br>
+            <form action="{{ url_for('key_retrieve_edge_image', user=user, password=password) }}" method="post">
+                <table align="center">
+                    <tr>
+                        <td>
+                            <label>Enter a valid key to get the associated image</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <label>(Edge image response) key:</label>
+                            <input type="text" name="key" />
+                            <input type="submit" value="get" />
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+
+    </body>
+</html>
