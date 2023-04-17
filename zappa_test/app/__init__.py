@@ -24,15 +24,6 @@ s3_bucket_name = "imagefilesbucket20230312222008826009"
 
 # initialize s3 client
 s3client = boto3.client('s3', region_name='us-east-1')
-'''
-resp = s3client.list_objects_v2(Bucket=s3_bucket_name)
-if 'Contents' in resp:
-    keys = []
-    for obj in resp['Contents']:
-        keys.append(obj['Key'])
-    for key in keys:
-        s3client.delete_object(Bucket=s3_bucket_name, Key=key)
-'''
 
 # init dynamodb
 dyclient = boto3.client('dynamodb', region_name='us-east-1')
@@ -140,7 +131,6 @@ def user_signup():
 @webapp.route('/api/logout')
 def logout():
     return render_template("login.html")
-
 
 
 from app import main

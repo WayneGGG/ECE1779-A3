@@ -48,7 +48,6 @@ def upload_put(user, password):
 
             # check repeated key/image
             if dy_check_item(user, key_value) is True:
-                print("repeat")
                 delete_key(key_value, user, password)
 
             # store image file to s3

@@ -4,6 +4,7 @@ from flask import render_template, url_for, request, redirect
 from . import webapp, local_test, s3client, s3_bucket_name, dydb, dyclient, table, table_name, check_account, login
 from flask import json
 from boto3.dynamodb.conditions import Key, Attr
+from datetime import date
 from datetime import datetime
 import cv2
 import os
@@ -43,6 +44,8 @@ def key_check(key_value, user, password):
         else:
             obj = s3client.get_object(Bucket=s3_bucket_name, Key=filename)
             image_content = base64.b64encode(obj['Body'].read())
+
+        helper()
 
         text = {
             "success": "true",
@@ -95,6 +98,9 @@ def key_retrieve_nojson_image(user, password):
             image_content = base64.b64encode(obj['Body'].read())
 
         content = image_content.decode('ascii')
+
+        helper()
+
         # show the image itself
         return render_template("show_image.html", content=content)
     else:
@@ -111,7 +117,7 @@ def key_retrieve_nojson_image(user, password):
         )
 
 
-# show an image (no json response) associated with a given key if the key exist
+# show an image (edge response) associated with a given key if the key exist
 @webapp.route('/api/<user>/<password>/key/edge/', methods=['POST'])
 def key_retrieve_edge_image(user, password):
     if check_account(user, password) is False:
@@ -154,6 +160,8 @@ def key_retrieve_edge_image(user, password):
             content = base64.b64encode(f.read()).decode('ascii')
         os.remove(new_filename)
 
+        helper()
+
         # show the edge image
         return render_template("show_image.html", content=content)
     else:
@@ -168,6 +176,56 @@ def key_retrieve_edge_image(user, password):
             status=400,
             mimetype='application/json'
         )
+
+
+# show an image (enc response) associated with a given key if the key exist
+@webapp.route('/api/<user>/<password>/key/enc/', methods=['POST'])
+def key_retrieve_enc_image(user, password):
+    if check_account(user, password) is False:
+        return login()
+
+    key_value = request.form.get('key')
+    response = table.query(
+        KeyConditionExpression=Key('user').eq(user) & Key('key').eq(key_value)
+    )
+    records = []
+    for i in response['Items']:
+        records.append(i)
+
+    # if exist
+    if len(records) > 0:
+        # get the filename of the image in dy, then go to s3 to get the file
+        filename = records[0]['image']
+        if local_test:
+            return webapp.response_class(
+                response=json.dumps({
+                    "success": "false",
+                    "error": {
+                        "code": 400,
+                        "message": "can not do this in local test"
+                    }
+                }),
+                status=400,
+                mimetype='application/json'
+            )
+        url = 'https://a3-images-20230409.s3.amazonaws.com/editor.html?name=' + filename
+        helper()
+
+        # show the enc image
+        return redirect(url)
+    else:
+        return webapp.response_class(
+            response=json.dumps({
+                "success": "false",
+                "error": {
+                    "code": 400,
+                    "message": "The key doesn't exist"
+                }
+            }),
+            status=400,
+            mimetype='application/json'
+        )
+
 
 
 # search images
@@ -226,5 +284,43 @@ def check_image(user, password, key):
             status=400,
             mimetype='application/json'
         )
+
+
+def helper():
+    up_table = dydb.Table('App_usage')
+    day = date.today().strftime("%Y%m%d")
+    time = datetime.now().hour
+    if time >= 4:
+        time = time - 4
+    else:
+        time = 24 - (4-time)
+
+    response = up_table.query(
+        KeyConditionExpression=Key('day').eq(day) & Key('time').eq(time)
+    )
+    records = []
+    for i in response['Items']:
+        records.append(i)
+    if len(records) > 0:
+        up_table.update_item(
+            Key={
+                'day': day,
+                'time': time
+            },
+            UpdateExpression="set request_served = request_served + :r",
+            ExpressionAttributeValues={
+                ':r': 1
+            }
+        )
+    else:
+        up_table.put_item(
+            Item={
+                'day': day,
+                'time': time,
+                'request_served': 1
+            }
+        )
+
+
 
 

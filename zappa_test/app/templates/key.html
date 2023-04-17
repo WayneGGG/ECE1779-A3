@@ -80,6 +80,22 @@
                         </td>
                     </tr>
                 </table>
+            </form><br>
+            <form action="{{ url_for('key_retrieve_enc_image', user=user, password=password) }}" method="post">
+                <table align="center">
+                    <tr>
+                        <td>
+                            <label>Enter a valid key to get the associated image</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <label>(Ehhancement image response) key:</label>
+                            <input type="text" name="key" />
+                            <input type="submit" value="get" />
+                        </td>
+                    </tr>
+                </table>
             </form>
         </div>
 
