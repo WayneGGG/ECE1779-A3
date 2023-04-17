@@ -1,5 +1,7 @@
 from PIL import Image, ImageEnhance
-from cloudio import ImageIO
+from cloudio import ImageIO, BucketConfig
+import logging, traceback, sys
+import json
 
 img_io = ImageIO()
 
@@ -32,17 +34,40 @@ def generate_preview_images(img, name):
             factor += 0.2
     return results
 
+        
+def log_exception():
+    exc_type, exc_value, exc_traceback = sys.exc_info()
+    logging.error(''.join(traceback.format_exception(exc_type, exc_value, exc_traceback)))
+
+def cors_response(s):
+    return {
+        'statusCode': 200,
+        'headers': {
+            'Access-Control-Allow-Headers': 'Content-Type,Access-Control-Allow-Origin',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+        },
+        'body': s,
+    }
+
 def enhance_image(event, context):
-    name = event['name']
-    img = img_io.read_image(name)
-    modified = False
-    for ename, e in enhancers.items():
-        if ename in event:
-            img = e(img).enhance(float(event[ename]))
-            modified = True
-    if modified:
-        img_io.write_image(img, name, bucket=BucketConfig.ENHANCE_BUCKET)
-        return []
-    else:
-        return generate_preview_images(img, name)
+    if event['requestContext']['http']['method'] == 'OPTIONS':
+        return cors_response('')
+    try:
+        body = json.loads(event['body'])
+        name = body['name']
+        img = img_io.read_image(name)
+        modified = False
+        for ename, e in enhancers.items():
+            if ename in body:
+                img = e(img).enhance(float(body[ename]))
+                modified = True
+        if modified:
+            img_io.write_image(img, name, bucket=BucketConfig.ENHANCE_BUCKET)
+            return cors_response('done')
+        else:
+            return cors_response(json.dumps(generate_preview_images(img, name)))
+    except Exception as e:
+        log_exception()
+        raise e
 

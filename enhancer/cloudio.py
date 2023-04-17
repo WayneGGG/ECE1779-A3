@@ -1,9 +1,10 @@
 import boto3
 from io import BytesIO
 from datetime import timedelta
+from PIL import Image
 
 class BucketConfig:
-    DEFAULT_BUCKET = 'a3-images-20230409'
+    DEFAULT_BUCKET = 'imagefilesbucket20230312222008826009'
     PREVIEW_BUCKET = 'a3-preview-20230409'
     ENHANCE_BUCKET = 'a3-enhance-20230409'
 
@@ -27,18 +28,9 @@ class ImageIO:
             extname = 'gif'
         img.save(buffer, extname)
         buffer.seek(0)
-        response = self.s3.put_object(Bucket=bucket, Key=name, Body=buffer)
+        response = self.s3.put_object(Bucket=bucket, Key=name, Body=buffer, ACL='public-read') # LOL
         assert response['ResponseMetadata']['HTTPStatusCode'] == 200, 'Fail to upload to S3'
 
         
 OLD_THRESHOLD=timedelta(minutes=10)
 
-def deploy_zip():
-    content = open('code.zip', 'r').read()
-    client = boto3.client('lambda')
-    client.update_function_code(
-        FunctionName='Enhance',
-        ZipFile=content,
-        Publish=True,
-        Architectures=['arm64'],
-    )
