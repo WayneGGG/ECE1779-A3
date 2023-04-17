@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit Image</title>
+  </head>
+  <body>
+    <div id="tools">
+      sharpness: <input type="range" id="sharpness" min="0" max="200"/>
+      contrast: <input type="range" id="contrast" min="0" max="200"/>
+      brightness: <input type="range" id="brightness" min="0" max="200"/>
+      <button id="process-btn">Process</button>
+    </div>
+    <div id="main"></div>
+    <script>
+      const remote = 'https://notfebmczdj5qdnxes4ksjv55m0rdpxm.lambda-url.us-east-1.on.aws/enhance_image';
+      const previewRemote = 'https://a3-preview-20230409.s3.amazonaws.com/'
+      const enhanceRemote = 'https://a3-enhance-20230409.s3.amazonaws.com/'
+      let root = document.getElementById('main');
+      let tools = document.getElementById('tools');
+
+      const factorToRange = (factor) => { return factor * 100; };
+      const rangeToFactor = (range) => { return range / 100; };
+
+      const showEditor = (name, obj) => {
+	  tools.style.visibility = 'visible';
+	  clearPreview();
+	  let req = Object.assign(obj, {name: name})
+	  fetch(remote, {
+	      method: 'POST',
+	      headers: {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*'},
+	      redirect: 'follow',
+	      body: JSON.stringify(req),
+	  }).then((response) => {
+	      let image = document.createElement('img');
+	      image.setAttribute('src', enhanceRemote + name);
+	      root.appendChild(image);
+	      for (let k in obj) {
+		  if (k === 'name') continue;
+		  console.log(k + ' : ' + obj[k])
+		  document.getElementById(k).value = factorToRange(obj[k])
+	      }
+	  });
+
+	  let btn = document.getElementById('process-btn');
+	  let listener = (event) => {
+	      let req = Object.create({});
+	      ['sharpness', 'contrast', 'brightness'].forEach(k => {
+		  console.log(k);
+		  req[k] = rangeToFactor(document.getElementById(k).value);
+	      });
+	      btn.removeEventListener('click', listener);
+	      showEditor(name, req);
+	      return false;
+	  }
+
+	  btn.addEventListener('click', listener);
+      }
+      
+      const createPreview = (name, obj) => {
+	  let image = document.createElement('img');
+	  image.setAttribute('src', previewRemote + obj.name)
+	  image.addEventListener('click', (event) => {
+	      showEditor(name, obj);
+	  });
+	  return image;
+      };
+
+
+      const clearPreview = () => {
+	  while (root.firstChild) root.firstChild.remove();
+      }
+      const showPreview = (name) => {
+	  tools.style.visibility = 'hidden';
+	  clearPreview();
+
+	  fetch(remote, {
+	      method: 'POST',
+	      headers: {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*'},
+	      redirect: 'follow',
+	      body: JSON.stringify({'name': name})
+	  }).then((response) => {
+	      return response.json()
+	  }).then((data) => {
+	      data.forEach((obj) => {
+		  root.appendChild(createPreview(name, obj));
+	      });
+	  });
+      };
+      showPreview(new URLSearchParams(window.location.search).get('name'));
+    </script>
+  </body>
+</html>
